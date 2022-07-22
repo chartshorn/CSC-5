@@ -12,6 +12,7 @@
 #include <cmath>
 #include <fstream>
 #include <time.h>
+#include <string>
 using namespace std;
 
 //User libraries
@@ -42,12 +43,12 @@ int main(int argc, char** argv) {
     //Init Variables & Seek User Input
     //file stream init
     fileNm="card.dat";
-    cards.open(fileNm,ios::out);
+    cards.open(fileNm, ios::out);
 
     //user vars init
     numPlys = 3; // 3 players including dealer
     
-    //Generate & Shuffle Deck Of Cards
+    //Generate Deck Of Cards
     for (unsigned char i = 0; i < nCards; i++) {
       string cardStr;
       cardStr = face[i%13] + "_";
@@ -56,14 +57,36 @@ int main(int argc, char** argv) {
     }
   
     //Map inputs to outputs -> the process
+    //Shuffle Cards
+    ifstream rdCrds;
+    rdCrds.open(fileNm);
+    vector <string> shfArr;
+    string cLine;
+    while (getline(cards, cLine)) {
+      shfArr.push_back(cLine);
+    }
+    for (short i = 0; i < nCards; i++) {
+      cout << shfArr[4];
+      
+      short rand1 = rand()%nCards+1;
+      short rand2 = rand()%nCards+1;
+      
+      //string swap1 = ;
+      //string swap2= ;
+      
+    }
+    rdCrds.close();
+
     //Deal Cards
     for (short i = 0; i < numPlys; i++) {
-      bool needCard = true;
+      bool cntTrn = true;
       
-      //Dealing of Cards
+      //Shuffling of Cards
       do {
         //generate random card # and see if it has been used in this deck
-      } while (needCard);
+
+        cntTrn = false;
+      } while (cntTrn);
     }
 
     //Output Data
