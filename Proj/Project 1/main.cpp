@@ -55,19 +55,18 @@ int main(int argc, char** argv) {
       cardStr += suit[i/13];
       cards <<setw(14)<<cardStr<<endl;
     }
+
+    cards.close();
   
     //Map inputs to outputs -> the process
     //Shuffle Cards
-    ifstream rdCrds;
-    rdCrds.open(fileNm);
+    cards.open(fileNm, ios::in);
     vector <string> shfArr;
     string cLine;
     while (getline(cards, cLine)) {
       shfArr.push_back(cLine);
     }
-    for (short i = 0; i < nCards; i++) {
-      cout << shfArr[4];
-      
+    for (short i = 0; i < nCards; i++) {   
       short rand1 = rand()%nCards+1;
       short rand2 = rand()%nCards+1;
       
@@ -75,10 +74,10 @@ int main(int argc, char** argv) {
       //string swap2= ;
       
     }
-    rdCrds.close();
-
+    cards.close();
+  
     //Deal Cards
-    for (short i = 0; i < numPlys; i++) {
+    /*for (short i = 0; i < numPlys; i++) {
       bool cntTrn = true;
       
       //Shuffling of Cards
@@ -87,12 +86,11 @@ int main(int argc, char** argv) {
 
         cntTrn = false;
       } while (cntTrn);
-    }
+    }*/
 
     //Output Data
     cout << "Hello world!";
 
     //Exit stage right!
-    cards.close();
     return 0;
 }
