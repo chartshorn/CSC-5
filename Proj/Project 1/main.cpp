@@ -7,13 +7,13 @@
 
 // System libraries
 #include <cmath>
+#include <cstring>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
 #include <string>
 #include <time.h>
 #include <vector>
-#include <cstring>
 using namespace std;
 
 // User libraries
@@ -34,18 +34,16 @@ int main(int argc, char **argv) {
   string face[13] = {"Ace", "2", "3",  "4",    "5",     "6",   "7",
                      "8",   "9", "10", "Jack", "Queen", "King"};
   string suit[4] = {"Clubs", "Spades", "Hearts", "Diamonds"};
-  vector<short> p1hand = {};
-  vector<short> p2hand = {};
-  vector<short> dealerhand = {};
+  string p1c1, p1c2, p1c3, p2c1, p2c2, p2c3, dc1, dc2, dc3;
 
   // file stream decl
   fstream cards;
   string fileNm;
 
   // Init Variables & Seek User Input
-  //card init
+  // card init
   cCard = 0;
-  
+
   // file stream init
   fileNm = "card.dat";
   cards.open(fileNm, ios::out);
@@ -71,7 +69,7 @@ int main(int argc, char **argv) {
   while (getline(cards, cLine)) {
     shfArr.push_back(cLine);
   }
-  for (short i = 0; i < nCards; i++) {
+  for (short i = 0; i < nCards * 10; i++) {
     short rand1 = rand() % nCards + 1;
     short rand2 = rand() % nCards + 1;
 
@@ -94,25 +92,52 @@ int main(int argc, char **argv) {
   cin.ignore();
   cout << endl;
 
+  // Deal Cards
+  for (short i = 0; i < numPlys * 2; i++) {
+    switch (i) {
+      case 0: {
+        p1c1 = shfArr[cCard];
+      } break;
+      case 1: {
+        p2c1 = shfArr[cCard];
+      } break;
+      case 2: {
+        dc1 = shfArr[cCard];
+      } break;
+      case 3: {
+        p1c2 = shfArr[cCard];
+        cCard++;
+      } break;
+      case 4: {
+        p2c2 = shfArr[cCard];
+      } break;
+      case 5: {
+        dc2 = shfArr[cCard];
+      } break;
+    }
+    cCard++;
+  }
+
+  cout << "The dealer shows card: " << dc2 << endl;
+
   // Player Turns
   for (short i = 0; i < numPlys; i++) {
     bool cntTrn = true;
 
     // Individual player turn logic
     do {
-      //var declaration
-      string hCard1 = shfArr[cCard];
-      cCard++;
-      string hCard2 = shfArr[cCard];
-      cCard++;
-      string hCard3,
-      scrng;
-      
+      // var declaration
+      string scrng;
       char plyrMv;
       short score;
       unsigned char aces;
 
-      //var init
+      //hand cards
+      string hCard1,
+      hCard2,
+      hCard3;
+
+      // var init
       score = 0;
       aces = 0;
 
@@ -120,66 +145,101 @@ int main(int argc, char **argv) {
         cout << "Hello Player " << i + 1 << endl;
         cout << "It is your turn" << endl;
         cout << "Your hand is:" << endl;
-        cout << "-" << hCard1 << endl;
-        cout << "-" << hCard2 << endl;
+        if (i==0) {
+          hCard1 = p1c1;
+          hCard2 = p1c2;
+          cout << "-" << p1c1 << endl;
+          cout << "-" << p1c2 << endl;
+        } else if (i==1) {
+          hCard1 = p2c1;
+          hCard2 = p2c2;
+          cout << "-" << p2c1 << endl;
+          cout << "-" << p2c2 << endl;
+        }
+        
 
-        //Player Input
+        // Player Input
         while (plyrMv != 'H' && plyrMv != 'S') {
           cout << "Enter H to Hit and S to Stand" << endl;
           cin >> plyrMv;
 
           if (plyrMv == 'H') {
-            cout << "Player " << i+1 << " Hits!" << endl;
-            hCard3 = shfArr[cCard];
+            //hit logic
+            cout << "Player " << i + 1 << " Hits!" << endl;
+            if (i==0) {
+              p1c3 = shfArr[cCard];
+              hCard3 = p1c3;
+              cout << "Your 3rd card is: " << endl << p1c3 << endl;
+            } else if (i==1) {
+              p2c3 = shfArr[cCard];
+              hCard3 = p2c3;
+              cout << "Your 3rd card is: " << endl << p2c3 << endl;
+            }
             cCard++;
-            cout << "Your 3rd card is: " << endl << hCard3 << endl;
           } else if (plyrMv == 'S') {
             // stand logic
-            cout << "Player " << i+1 << " Stands!" << endl;
-          //Player Input Validation
+            cout << "Player " << i + 1 << " Stands!" << endl;
+            // Player Input Validation
           } else {
             cout << "Invalid Input!" << endl;
           }
         }
         plyrMv = ' ';
 
-        //Scoring logic
-        //Separate Individual Card Identifiers
+        // Scoring logic
+        // Separate Individual Card Identifiers
         for (short c = 0; c < 3; c++) {
           short pos;
-          if (c==0) {
+          if (c == 0) {
             pos = hCard1.find("_");
             scrng = hCard1.substr(0, pos);
           } else if (c == 1) {
             pos = hCard2.find("_");
             scrng = hCard2.substr(0, pos);
-          } else if (c== 2) {
+          } else if (c == 2) {
             if (hCard3.length() > 0) {
               pos = hCard3.find("_");
               scrng = hCard3.substr(0, pos);
-            } 
+            }
           }
 
-          if (scrng == "2") score += 2;
-          else if (scrng == "3") score += 3;
-          else if (scrng == "4") score += 4;
-          else if (scrng == "5") score += 5;
-          else if (scrng == "6") score += 6;
-          else if (scrng == "7") score += 7;
-          else if (scrng == "8") score += 8;
-          else if (scrng == "9") score += 9;
-          else if (scrng == "10" || scrng == "Jack" || scrng == "Queen" || scrng == "King") score += 10;
-          else if (scrng == "Ace") aces++;
+          if (scrng == "2")
+            score += 2;
+          else if (scrng == "3")
+            score += 3;
+          else if (scrng == "4")
+            score += 4;
+          else if (scrng == "5")
+            score += 5;
+          else if (scrng == "6")
+            score += 6;
+          else if (scrng == "7")
+            score += 7;
+          else if (scrng == "8")
+            score += 8;
+          else if (scrng == "9")
+            score += 9;
+          else if (scrng == "10" || scrng == "Jack" || scrng == "Queen" ||
+                   scrng == "King")
+            score += 10;
+          else if (scrng == "Ace")
+            aces++;
           scrng = "";
         }
 
-        //logic to determine highest value of ace
+        // logic to determine highest value of ace
         for (short a = 0; a < aces; a++) {
-          if (score+11 <= 21) score += 11;
-          else score++;
+          if (score + 11 <= 21)
+            score += 11;
+          else
+            score++;
         }
-        
-        cout << "Player " << i+1;
+
+        if (score == 21) {
+          cout << "Player " << i + 1 << " Blackjack!" << endl;
+        }
+
+        cout << "Player " << i + 1;
         if (score > 21) {
           cout << " Busted!" << endl;
         } else {
