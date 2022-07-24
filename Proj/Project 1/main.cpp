@@ -25,7 +25,7 @@ using namespace std;
 // Execution begins here
 int main(int argc, char **argv) {
   // seed for the random number generator
-  srand(pow(time(0), 2));
+  srand(static_cast<unsigned int>(pow(time(0), 2)));
 
   // Declare Variables
   unsigned short numPlys,
@@ -135,8 +135,9 @@ int main(int argc, char **argv) {
       // var declaration
       string scrng;
       char plyrMv;
-      short score;
+      float score;
       unsigned char aces;
+      bool blackjack;
 
       // hand cards
       string hCard1, hCard2, hCard3;
@@ -146,8 +147,7 @@ int main(int argc, char **argv) {
       aces = 0;
 
       if (i == 0 || i == 1) {
-        cout << "Hello Player " << i + 1 << endl;
-        cout << "It is your turn" << endl;
+        cout << "Hello Player " << i + 1 << "! It is your turn." << endl;
         cout << "Your hand is:" << endl;
         if (i == 0) {
           hCard1 = p1c1;
@@ -189,28 +189,28 @@ int main(int argc, char **argv) {
         }
         plyrMv = ' ';
       } else {
-        //Dealer (Computer) Choices
-        //decision making var declaration
-        string cardv1,
-        cardv2;
+        // Dealer (Computer) Choices
+        // decision making var declaration
+        string cardv1, cardv2;
         short pos;
 
-        //Output code and variable init
+        // Output code and variable init
         cout << "Dealer Flips Second Card To Reveal:" << endl;
         hCard1 = dc1;
         hCard2 = dc2;
         cout << "-" << hCard1 << endl;
         cout << "-" << hCard2 << endl;
 
-        //Automated choices
+        // Automated choices
         pos = hCard1.find("_");
         cardv1 = hCard1.substr(0, pos);
         pos = hCard2.find("_");
         cardv2 = hCard2.substr(0, pos);
-        //Determine if either card has a value of 10
-        //If neither card has a value of 10, hit
-        if ( cardv1 != "10" && cardv1 != "Jack" && cardv1 != "Queen" && cardv1 != "King" 
-          && cardv2 != "10" && cardv2 != "Jack" && cardv2 != "Queen" && cardv2 != "King") {
+        // Determine if either card has a value of 10
+        // If neither card has a value of 10, hit
+        if (cardv1 != "10" && cardv1 != "Jack" && cardv1 != "Queen" &&
+            cardv1 != "King" && cardv2 != "10" && cardv2 != "Jack" &&
+            cardv2 != "Queen" && cardv2 != "King") {
           dc3 = shfArr[cCard];
           hCard3 = dc3;
           cout << "Your 3rd card is: " << endl << hCard3 << endl;
@@ -234,7 +234,7 @@ int main(int argc, char **argv) {
           }
         }
 
-        //calculate card values and add to turn score
+        // calculate card values and add to turn score
         if (scrng == "2")
           score += 2;
         else if (scrng == "3")
@@ -273,11 +273,12 @@ int main(int argc, char **argv) {
       }
 
       // Determine blackjack
-      if (score == 21 && (i == 0 || i == 1)) {
+      blackjack = (score ==21 && (i ==0 || i==1)) ? true : false; 
+      if (blackjack) {
         cout << "Player " << i + 1 << " Blackjack!" << endl;
       }
 
-      //Output hand results
+      // Output hand results
       if (i == 0 || i == 1)
         cout << "Player " << i + 1;
       else
@@ -288,7 +289,7 @@ int main(int argc, char **argv) {
         cout << " Has a Score of " << score << endl;
       }
 
-      //Set high level tracking of score
+      // Set high level tracking of score
       if (i == 0) {
         p1scr = score;
       } else if (i == 1) {
@@ -297,7 +298,7 @@ int main(int argc, char **argv) {
         dlrscr = score;
       }
 
-      //Reset score
+      // Reset score
       score = 0;
 
       cout << "-======-" << endl;
@@ -306,18 +307,21 @@ int main(int argc, char **argv) {
   }
 
   // Determine Winner
-  if (p1scr > 21) p1scr = 0;
-  if (p2scr > 21) p2scr = 0;
-  if (dlrscr > 21) dlrscr = 0;
-  
+  if (p1scr > 21)
+    p1scr = 0;
+  if (p2scr > 21)
+    p2scr = 0;
+  if (dlrscr > 21)
+    dlrscr = 0;
+
   if (dlrscr > p1scr && dlrscr > p2scr) {
-    //dealer wins
+    // dealer wins
     cout << "The house always wins! Congratulations to the dealer for winning.";
   } else if (p1scr > p2scr) {
-    //p1 wins
+    // p1 wins
     cout << "Congratulations to our lucky winner, Player 1!";
   } else if (p2scr > p1scr) {
-    //p2 wins
+    // p2 wins
     cout << "Ding Ding Ding! Player 2 wins it all!";
   } else if (p1scr == p2scr && p2scr == dlrscr) {
     cout << "Push!" << endl;
