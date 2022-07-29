@@ -35,58 +35,58 @@ int main(int argc, char **argv) {
       dlrscr;              // dealer score
   const short nCards = 52; // number of cards in the deck
   string face[13] = {"Ace", "2", "3",  "4",    "5",     "6",   "7",
-                     "8",   "9", "10", "Jack", "Queen", "King"};
-  string suit[4] = {"Clubs", "Spades", "Hearts", "Diamonds"};
-  string p1c1, p1c2, p1c3, p2c1, p2c2, p2c3, dc1, dc2, dc3;
+                     "8",   "9", "10", "Jack", "Queen", "King"}; // all possible card faces
+  string suit[4] = {"Clubs", "Spades", "Hearts", "Diamonds"}; // all possible card suits
+  string p1c1, p1c2, p1c3, p2c1, p2c2, p2c3, dc1, dc2, dc3; // ply1 cards 1-3, ply 2 cards 1-3, dealer cards 1-3;
 
   // file stream decl
-  fstream cards;
-  string fileNm;
+  fstream cards; // filestream for card,dat
+  string fileNm; // name of the file to read/write to
 
   // Init Variables & Seek User Input
   // card init
   cCard = 0;
 
-  // file stream init
-  fileNm = "card.dat";
-  cards.open(fileNm, ios::out);
-
   // user vars init
   numPlys = 3; // 3 players including dealer
 
-  // Generate Deck Of Cards
+  // file stream init
+  fileNm = "card.dat";
+  cards.open(fileNm, ios::out); //open write stream
+
+  // Generate Deck Of Cards - Write to file
   for (unsigned char i = 0; i < nCards; i++) {
-    string cardStr;
-    cardStr = face[i % 13] + "_";
-    cardStr += suit[i / 13];
-    cards << cardStr << endl;
+    string cardStr; // Blank string to write to 
+    cardStr = face[i % 13] + "_"; // set string equal to card face
+    cardStr += suit[i / 13]; // append the suit
+    cards << cardStr << endl; // write to file
   }
 
-  cards.close();
+  cards.close(); // close write stream
 
   // Map inputs to outputs -> the process
   // Load cards from file
   cards.open(fileNm, ios::in);
-  vector<string> shfArr;
-  string cLine;
+  vector<string> shfArr; // deck to be shuffled
+  string cLine; // current line of the file
   while (getline(cards, cLine)) {
-    shfArr.push_back(cLine);
+    shfArr.push_back(cLine); // for each line of the file, add it to the shuffled deck array
   }
 
   // Shuffle cards
   for (short i = 0; i < nCards * 14; i++) {
-    short rand1 = rand() % nCards;
-    short rand2 = rand() % nCards + 1;
+    short rand1 = rand() % nCards; // random card from the deck
+    short rand2 = rand() % nCards + 1; // random card from the deck
 
-    string swap1 = shfArr[rand1];
-    string swap2 = shfArr[rand2];
+    string swap1 = shfArr[rand1]; // store first card in memory
+    string swap2 = shfArr[rand2]; // store second card in memory
 
-    shfArr[rand1] = swap2;
-    shfArr[rand2] = swap1;
+    shfArr[rand1] = swap2; // swap card 1 with card 2
+    shfArr[rand2] = swap1; // vice versa
   }
-  cards.close();
+  cards.close(); // close read stream
 
-  // Generate Game Output
+  // Generate Game Information Output
   cout << right << setw(32) << "BLACKJACK" << endl;
   cout << right << setw(32) << "2 Player + 1 Dealer Blackjack" << endl;
   cout << right << setw(32) << "Care to test your odds?" << endl;
@@ -97,7 +97,7 @@ int main(int argc, char **argv) {
   cin.ignore();
   cout << endl;
 
-  // Deal Cards
+  // Deal Each Player Two Cards (numPlys * 2)
   for (short i = 0; i < numPlys * 2; i++) {
     switch (i) {
     case 0: {
@@ -120,31 +120,31 @@ int main(int argc, char **argv) {
       dc2 = shfArr[cCard];
     } break;
     }
-    cCard++;
+    cCard++; // increase what card to pull from the deck
   }
 
   cout << "The dealer shows card: " << dc2 << endl;
   cout << "-======-" << endl;
 
-  // Player Turns
+  // Player Turns - While I is less than the number of players, create a turn
   for (short i = 0; i < numPlys; i++) {
     bool cntTrn = true;
 
     // Individual player turn logic
     do {
       // var declaration
-      string scrng;
-      char plyrMv;
-      float score;
-      unsigned char aces;
-      bool blackjack;
+      string scrng; // string utilized later to determine a cards value
+      char plyrMv; // player move - whether they want to hit or stand
+      float score; // score of current turn
+      unsigned char aces; // number of aces in a players hand
+      bool blackjack; // whether or not a player has blackjack
 
       // hand cards
-      string hCard1, hCard2, hCard3;
+      string hCard1, hCard2, hCard3; // first card in the hand, second card in the hand, third card in the hand
 
       // var init
-      score = 0;
-      aces = 0;
+      score = 0; // player starts w no score
+      aces = 0; // player starts w no aces
 
       if (i == 0 || i == 1) {
         cout << "Hello Player " << i + 1 << "! It is your turn." << endl;
@@ -170,15 +170,15 @@ int main(int argc, char **argv) {
             // hit logic
             cout << "Player " << i + 1 << " Hits!" << endl;
             if (i == 0) {
-              p1c3 = shfArr[cCard];
+              p1c3 = shfArr[cCard]; // draw an additional card for player 1
               hCard3 = p1c3;
-              cout << "Your 3rd card is: " << endl << p1c3 << endl;
+              cout << "Your 3rd card is: " << endl << p1c3 << endl; // output new card
             } else if (i == 1) {
-              p2c3 = shfArr[cCard];
+              p2c3 = shfArr[cCard]; // draw an additional card for player 2
               hCard3 = p2c3;
-              cout << "Your 3rd card is: " << endl << p2c3 << endl;
+              cout << "Your 3rd card is: " << endl << p2c3 << endl; // output new card
             }
-            cCard++;
+            cCard++; // increase current position in deck
           } else if (plyrMv == 'S') {
             // stand logic
             cout << "Player " << i + 1 << " Stands!" << endl;
@@ -191,29 +191,29 @@ int main(int argc, char **argv) {
       } else {
         // Dealer (Computer) Choices
         // decision making var declaration
-        string cardv1, cardv2;
-        short pos;
+        string cardv1, cardv2; // value of dealers first & second card
+        short pos; // index of _ in card strings
 
         // Output code and variable init
         cout << "Dealer Flips Second Card To Reveal:" << endl;
-        hCard1 = dc1;
-        hCard2 = dc2;
-        cout << "-" << hCard1 << endl;
-        cout << "-" << hCard2 << endl;
+        hCard1 = dc1; // set the hand card equal to dealer cards
+        hCard2 = dc2; // ^
+        cout << "-" << hCard1 << endl; // output dealer cards
+        cout << "-" << hCard2 << endl; // ^
 
         // Automated choices
-        pos = hCard1.find("_");
-        cardv1 = hCard1.substr(0, pos);
-        pos = hCard2.find("_");
-        cardv2 = hCard2.substr(0, pos);
+        pos = hCard1.find("_"); // find where the _ in string is
+        cardv1 = hCard1.substr(0, pos); // split string and store first half
+        pos = hCard2.find("_"); // ^
+        cardv2 = hCard2.substr(0, pos); // ^
         // Determine if either card has a value of 10
         // If neither card has a value of 10, hit
         if (cardv1 != "10" && cardv1 != "Jack" && cardv1 != "Queen" &&
             cardv1 != "King" && cardv2 != "10" && cardv2 != "Jack" &&
             cardv2 != "Queen" && cardv2 != "King") {
-          dc3 = shfArr[cCard];
+          dc3 = shfArr[cCard]; // pull a new card from the deck
           hCard3 = dc3;
-          cout << "Your 3rd card is: " << endl << hCard3 << endl;
+          cout << "Your 3rd card is: " << endl << hCard3 << endl; // output new card
         }
       }
 
@@ -222,15 +222,15 @@ int main(int argc, char **argv) {
       for (short c = 0; c < 3; c++) {
         short pos;
         if (c == 0) {
-          pos = hCard1.find("_");
-          scrng = hCard1.substr(0, pos);
+          pos = hCard1.find("_"); // find where the _ in string is
+          scrng = hCard1.substr(0, pos); // split string and store first half
         } else if (c == 1) {
-          pos = hCard2.find("_");
-          scrng = hCard2.substr(0, pos);
+          pos = hCard2.find("_"); // find where the _ in string is
+          scrng = hCard2.substr(0, pos); // split string and store first half
         } else if (c == 2) {
           if (hCard3.length() > 0) {
-            pos = hCard3.find("_");
-            scrng = hCard3.substr(0, pos);
+            pos = hCard3.find("_"); // find where the _ in string is
+            scrng = hCard3.substr(0, pos); // split string and store first half
           }
         }
 
@@ -273,7 +273,7 @@ int main(int argc, char **argv) {
       }
 
       // Determine blackjack
-      blackjack = (score ==21 && (i ==0 || i==1)) ? true : false; 
+      blackjack = (score == 21 && (i == 0 || i == 1)) ? true : false;
       if (blackjack) {
         cout << "Player " << i + 1 << " Blackjack!" << endl;
       }
@@ -308,11 +308,11 @@ int main(int argc, char **argv) {
 
   // Determine Winner
   if (p1scr > 21)
-    p1scr = 0;
+    p1scr = 0; // neutralize score if player has busted
   if (p2scr > 21)
-    p2scr = 0;
+    p2scr = 0; // neutralize score if player has busted
   if (dlrscr > 21)
-    dlrscr = 0;
+    dlrscr = 0; // neutralize score if player has busted
 
   if (dlrscr > p1scr && dlrscr > p2scr) {
     // dealer wins
